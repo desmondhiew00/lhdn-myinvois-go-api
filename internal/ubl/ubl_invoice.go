@@ -13,7 +13,7 @@ type InvoiceUBLInput struct {
 	TotalExcludingTax  float64                `json:"totalExcludingTax"`
 	TotalIncludingTax  float64                `json:"totalIncludingTax"`
 	TotalTaxAmount     float64                `json:"totalTaxAmount"`
-	Supplier           SupplierUBLInput       `json:"supplier"`
+	Supplier           *SupplierUBLInput      `json:"supplier,omitempty"`
 	Buyer              BuyerUBLInput          `json:"buyer"`
 	LineItems          []InvoiceLineItemInput `json:"lineItems"`
 }

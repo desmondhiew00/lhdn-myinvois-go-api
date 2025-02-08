@@ -151,6 +151,29 @@ paths:
       summary: Get Document Raw
       tags:
       - MyInvois
+  /document/invoice:
+    post:
+      consumes:
+      - application/json
+      description: Generate an invoice document with digital signature
+      parameters:
+      - description: Invoice input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/ubl.InvoiceUBLInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Signed invoice document
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Generate Invoice Document
+      tags:
+      - Document
   /get-invoice-qr-code:
     get:
       consumes:
@@ -176,6 +199,31 @@ paths:
             additionalProperties: true
             type: object
       summary: Get Invoice QR Code
+      tags:
+      - MyInvois
+  /get-recent-documents:
+    get:
+      consumes:
+      - application/json
+      description: Get the recent documents
+      parameters:
+      - description: Page Number
+        in: query
+        name: pageNo
+        type: string
+      - description: Page Size
+        in: query
+        name: pageSize
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Recent documents
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Recent Documents
       tags:
       - MyInvois
   /search-taxpayer-tin:

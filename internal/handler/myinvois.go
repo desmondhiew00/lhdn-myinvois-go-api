@@ -133,8 +133,33 @@ func (h *MyInvoisHandler) GetInvoiceQrCode(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// @Tags MyInvois
+// @Summary Get Recent Documents
+// @Description Get the recent documents
+// @Accept json
+// @Produce json
+// @Param pageNo query string false "Page Number"
+// @Param pageSize query string false "Page Size"
+// @Success 200 {object} map[string]interface{} "Recent documents"
+// @Router /get-recent-documents [get]
+func (h *MyInvoisHandler) GetRecentDocuments(c *gin.Context) {
+	params := map[string]string{}
+	if c.Query("pageNo") != "" {
+		params["pageNo"] = c.Query("pageNo")
+	}
+	if c.Query("pageSize") != "" {
+		params["pageSize"] = c.Query("pageSize")
+	}
+
+	res, err := h.client.GetRecentDocuments(params)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error getting recent documents: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
 // TODO: ---
-// SubmitDocument
 // RejectDocument
 // GetSubmission
-// GetRecentDocuments

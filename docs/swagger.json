@@ -70,6 +70,41 @@
                 }
             }
         },
+        "/document/invoice": {
+            "post": {
+                "description": "Generate an invoice document with digital signature",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Document"
+                ],
+                "summary": "Generate Invoice Document",
+                "parameters": [
+                    {
+                        "description": "Invoice input",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ubl.InvoiceUBLInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Signed invoice document",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/get-invoice-qr-code": {
             "get": {
                 "description": "Get the QR code of an invoice",
@@ -102,6 +137,44 @@
                 "responses": {
                     "200": {
                         "description": "Invoice QR code",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/get-recent-documents": {
+            "get": {
+                "description": "Get the recent documents",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "MyInvois"
+                ],
+                "summary": "Get Recent Documents",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Page Number",
+                        "name": "pageNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page Size",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Recent documents",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true

@@ -8,9 +8,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 )
 
 type DocumentSubmissionInput struct {
@@ -75,7 +77,7 @@ func (e *EInvoicing) ValidateTaxpayerTin(idType, idValue string) (bool, error) {
 	return false, nil
 }
 
-func (e *EInvoicing) SubmitDocument(docs []DocumentSubmissionInput) (*DocumentSubmissionResponse, error) {
+func (e *EInvoicing) SubmitDocument(docs []DocumentSubmissionInput) (map[string]interface{}, error) {
 	auth, err := e.BearerToken()
 	if err != nil {
 		return nil, err
@@ -114,38 +116,36 @@ func (e *EInvoicing) SubmitDocument(docs []DocumentSubmissionInput) (*DocumentSu
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusAccepted {
 		return nil, e.parseHTTPError(resp)
 	}
-	var result DocumentSubmissionResponse
-	err = json.Unmarshal(body, &result)
+
+	resBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Error parsing JSON:", err)
 		return nil, err
 	}
-	return &result, nil
+
+	return e.parseJSON(resBody)
 }
 
-func (e *EInvoicing) GetDocument(documentId string) (*DocumentSummary, error) {
+func (e *EInvoicing) GetDocument(documentId string) (map[string]interface{}, error) {
+	start := time.Now()
 	endpoint := fmt.Sprintf("%s/api/v1.0/documents/%s/raw", e.BaseURL, documentId)
 	resBody, err := e.handleGetRequest(endpoint, nil)
 	if err != nil {
 		return nil, err
 	}
-
-	var result DocumentSummary
-	err = json.Unmarshal(resBody, &result)
-	if err != nil {
-		return nil, err
-	}
-
-	return &result, nil
+	elapsed := time.Since(start)
+	log.Printf("GetDocument took %s", elapsed)
+	return e.parseJSON(resBody)
 }
 
 func (e *EInvoicing) GetDocumentDetails(documentId string) (map[string]interface{}, error) {
+	start := time.Now()
 	endpoint := fmt.Sprintf("%s/api/v1.0/documents/%s/details", e.BaseURL, documentId)
 	resBody, err := e.handleGetRequest(endpoint, nil)
 	if err != nil {
 		return nil, err
 	}
-
+	elapsed := time.Since(start)
+	log.Printf("GetDocumentDetails took %s", elapsed)
 	return e.parseJSON(resBody)
 }
 
@@ -213,15 +213,12 @@ func (e *EInvoicing) GetSubmission(submissionId string, pageNo, pageSize int) (m
 	return e.parseJSON(resBody)
 }
 
-func (e *EInvoicing) GetRecentDocuments(params *GetRecentDocumentsParams) (map[string]interface{}, error) {
+func (e *EInvoicing) GetRecentDocuments(params map[string]string) (map[string]interface{}, error) {
 	endpoint := fmt.Sprintf("%s/api/v1.0/documents/recent", e.BaseURL)
 	queryParams := url.Values{}
 	if params != nil {
-		if params.PageNo != nil {
-			queryParams.Set("pageNo", fmt.Sprintf("%d", *params.PageNo))
-		}
-		if params.PageSize != nil {
-			queryParams.Set("pageSize", fmt.Sprintf("%d", *params.PageSize))
+		for key, value := range params {
+			queryParams.Set(key, value)
 		}
 	}
 	resBody, err := e.handleGetRequest(endpoint, &queryParams)

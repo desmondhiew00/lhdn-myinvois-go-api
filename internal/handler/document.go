@@ -16,6 +16,7 @@ import (
 // @Produce json
 // @Param input body ubl.InvoiceUBLInput true "Invoice input"
 // @Success 200 {object} map[string]interface{} "Signed invoice document"
+// @Router /document/invoice [post]
 func InvoiceDocument(c *gin.Context) {
 
 	var input ubl.InvoiceUBLInput

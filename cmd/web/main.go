@@ -32,6 +32,7 @@ func main() {
 	r.GET("/document-raw", myInvoisHandler.GetDocumentRaw)
 	r.GET("/document-details", myInvoisHandler.GetDocumentDetails)
 	r.GET("/get-invoice-qr-code", myInvoisHandler.GetInvoiceQrCode)
+	r.GET("/get-recent-documents", myInvoisHandler.GetRecentDocuments)
 	r.GET("/search-taxpayer-tin", myInvoisHandler.SearchTaxpayerTin)
 	r.GET("/validate-taxpayer-tin", myInvoisHandler.ValidateTaxpayerTin)
 	r.POST("/submit-invoice", eInvoicingHandler.SubmitInvoice)
@@ -45,10 +46,4 @@ func main() {
 	fmt.Println("--------------------------------\n ")
 
 	r.Run(":" + port)
-
-	// http.HandleFunc("/invoice-document", eInvoiceHandler)
-	// http.HandleFunc("/document-raw", getDocumentHandler)
-	// log.Printf("Server listening on port %s", port)
-	// log.Fatal(http.ListenAndServe(":"+port, nil))
-
 }

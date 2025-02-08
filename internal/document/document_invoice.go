@@ -15,7 +15,7 @@ func NewDocumentInvoice() *DocumentInvoice {
 
 func (d *DocumentInvoice) Build(input ubl.InvoiceUBLInput) (map[string]interface{}, error) {
 	invoice := ubl.InvoiceUBL(input, constant.CurrencyCodeMYR)
-	ubl.AddSupplierUBL(invoice, input.Supplier)
+	ubl.AddSupplierUBL(invoice, d.Supplier())
 	ubl.AddBuyerUBL(invoice, input.Buyer)
 
 	rawUBL := make(map[string]interface{})
