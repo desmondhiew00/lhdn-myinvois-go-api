@@ -1,0 +1,262 @@
+definitions:
+  ubl.AddressUBLInput:
+    properties:
+      addressLine0:
+        type: string
+      addressLine1:
+        type: string
+      addressLine2:
+        type: string
+      cityName:
+        type: string
+      country:
+        type: string
+      postalZone:
+        type: string
+      state:
+        type: string
+    type: object
+  ubl.BuyerUBLInput:
+    properties:
+      address:
+        $ref: '#/definitions/ubl.AddressUBLInput'
+      contactNumber:
+        type: string
+      email:
+        type: string
+      idType:
+        type: string
+      idValue:
+        description: NRIC, BRN, PASSPORT, ARMY
+        type: string
+      name:
+        type: string
+      sstRegistrationNumber:
+        type: string
+      tin:
+        type: string
+    type: object
+  ubl.InvoiceLineItemInput:
+    properties:
+      classificationCode:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      quantity:
+        type: number
+      subtotal:
+        type: number
+      taxAmount:
+        type: number
+      taxRate:
+        type: number
+      unitCode:
+        type: string
+      unitPrice:
+        type: number
+    type: object
+  ubl.InvoiceUBLInput:
+    properties:
+      buyer:
+        $ref: '#/definitions/ubl.BuyerUBLInput'
+      invoiceNumber:
+        type: string
+      lineItems:
+        items:
+          $ref: '#/definitions/ubl.InvoiceLineItemInput'
+        type: array
+      supplier:
+        $ref: '#/definitions/ubl.SupplierUBLInput'
+      totalExcludingTax:
+        type: number
+      totalIncludingTax:
+        type: number
+      totalPayableAmount:
+        type: number
+      totalTaxAmount:
+        type: number
+    type: object
+  ubl.SupplierUBLInput:
+    properties:
+      address:
+        $ref: '#/definitions/ubl.AddressUBLInput'
+      contactNumber:
+        type: string
+      email:
+        type: string
+      idType:
+        type: string
+      idValue:
+        description: NRIC, BRN, PASSPORT, ARMY
+        type: string
+      msicCode:
+        type: string
+      msicDescription:
+        type: string
+      name:
+        type: string
+      sst:
+        type: string
+      tin:
+        type: string
+      ttx:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /document-details:
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a document by documentId
+      parameters:
+      - description: Document ID
+        in: query
+        name: documentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Document details
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Document Details
+      tags:
+      - MyInvois
+  /document-raw:
+    get:
+      consumes:
+      - application/json
+      description: Get the raw document by documentId
+      parameters:
+      - description: Document ID
+        in: query
+        name: documentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Document raw
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Document Raw
+      tags:
+      - MyInvois
+  /get-invoice-qr-code:
+    get:
+      consumes:
+      - application/json
+      description: Get the QR code of an invoice
+      parameters:
+      - description: Document ID
+        in: query
+        name: documentId
+        required: true
+        type: string
+      - description: Long ID
+        in: query
+        name: longId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Invoice QR code
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Invoice QR Code
+      tags:
+      - MyInvois
+  /search-taxpayer-tin:
+    get:
+      consumes:
+      - application/json
+      description: Search for a taxpayer TIN
+      parameters:
+      - description: ID Type
+        in: query
+        name: idType
+        required: true
+        type: string
+      - description: ID Value
+        in: query
+        name: idValue
+        required: true
+        type: string
+      - description: Taxpayer Name
+        in: query
+        name: taxpayerName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Taxpayer TIN search result
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Search Taxpayer TIN
+      tags:
+      - MyInvois
+  /submit-invoice:
+    post:
+      consumes:
+      - application/json
+      description: Submit an invoice to the e-Invoicing system
+      parameters:
+      - description: Invoice input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/ubl.InvoiceUBLInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Invoice submitted successfully
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Submit Invoice
+      tags:
+      - E-Invoicing
+  /validate-taxpayer-tin:
+    get:
+      consumes:
+      - application/json
+      description: Validate the Taxpayer TIN
+      parameters:
+      - description: ID Type
+        in: query
+        name: idType
+        required: true
+        type: string
+      - description: ID Value
+        in: query
+        name: idValue
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Taxpayer TIN validation result
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Validate Taxpayer TIN
+      tags:
+      - MyInvois
+swagger: "2.0"
